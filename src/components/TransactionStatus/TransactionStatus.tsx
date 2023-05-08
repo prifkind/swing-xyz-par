@@ -10,7 +10,7 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
 
   const [txnDetails, setTxnDetails] = useState<any>({});
   const [txnProcessing, setTxnProcessing] = useState(false);
-  const [txnStatus, setTxnStatus] = useState("Processing");
+  const [txnStatus, setTxnStatus] = useState("");
 
   const onApproveHandler = async () => {
     setTxnProcessing(true);
@@ -34,7 +34,7 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
     alert("Transaction Rejected");
   };
 
-  if (formFields.amount > allowance && !txnProcessing) {
+  if (formFields.amount > allowance && !txnProcessing && txnStatus === "") {
     return (
       <div>
         <div>
@@ -45,13 +45,13 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
         <button onClick={onRejectHandler}>Reject</button>
       </div>
     );
-  } else if (txnProcessing) {
+  } else {
     return (
       <div>
         <div>Transaction Status: {txnStatus}</div>
       </div>
     );
-  } else return null;
+  }
 };
 
 export default TransactionStatus;

@@ -7,7 +7,7 @@ import { getQuote } from "../../services/transaction";
 const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   props: ITransactionFormProps
 ) => {
-  const { setFormFields, setProcessing, setQuote } = props;
+  const { setFormFields, setProcessing, setQuote, setStale } = props;
   const [formData, setFormData] = useState({
     amount: "",
     fromAddress: "",
@@ -23,15 +23,17 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   ): Promise<void> => {
     event.preventDefault();
     setProcessing(true);
+    setStale(false);
 
     let newQuote = await getQuote(formData);
     setQuote(newQuote);
+    setProcessing(false);
   };
 
   const updateFormData = (key: string, value: string) => {
     setFormData((prevState) => ({ ...prevState, [key]: value }));
     setFormFields(formData);
-    setProcessing(false);
+    setStale(true);
   };
 
   return (

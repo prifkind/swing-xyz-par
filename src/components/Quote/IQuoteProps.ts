@@ -7,5 +7,6 @@ export interface IQuoteProps {
   quote: IResponseRoute;
   setAllowance: (allowance: number | string) => void;
   setTxInitiated: (txInitiated: boolean) => void;
+  stale: boolean;
   txInitiated: boolean;
 }
