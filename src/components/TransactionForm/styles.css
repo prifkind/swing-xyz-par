@@ -1,0 +1,25 @@
+.transactionFormContainer {
+    display: flex;
+}
+
+.fromContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 2%;
+}
+
+.fromInput {
+  margin-bottom: 1%;
+}
+
+.toContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 2%;
+}
+
+.toInput {
+  margin-bottom: 1%;
+}
