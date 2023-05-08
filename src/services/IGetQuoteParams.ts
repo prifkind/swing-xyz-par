@@ -1,4 +1,4 @@
-export interface ITransactionParams {
+export interface IGetQuoteParams {
   amount: string;
   fromAddress: string;
   fromChain: string;

@@ -7,23 +7,15 @@ import { getQuote } from "../../services/transaction";
 const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   props: ITransactionFormProps
 ) => {
-  const { setProcessing, setQuote } = props;
-  const [amount, setAmount] = useState("");
-  const [fromAddress, setFromAddress] = useState("");
-  const [fromChain, setFromChain] = useState("");
-  const [fromToken, setFromToken] = useState("");
-  const [toAddress, setToAddress] = useState("");
-  const [toChain, setToChain] = useState("");
-  const [toToken, setToToken] = useState("");
-
+  const { setFormFields, setProcessing, setQuote } = props;
   const [formData, setFormData] = useState({
-    amount,
-    fromAddress,
-    fromChain,
-    fromToken,
-    toAddress,
-    toChain,
-    toToken,
+    amount: "",
+    fromAddress: "",
+    fromChain: "",
+    fromToken: "",
+    toAddress: "",
+    toChain: "",
+    toToken: "",
   });
 
   const onSubmitHandler: FormEventHandler = async (
@@ -34,27 +26,17 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
 
     let newQuote = await getQuote(formData);
     setQuote(newQuote);
+  };
 
+  const updateFormData = (key: string, value: string) => {
+    setFormData((prevState) => ({ ...prevState, [key]: value }));
+    setFormFields(formData);
     setProcessing(false);
   };
 
   return (
     <div>
-      <form
-        className="transactionFormContainer"
-        onSubmit={onSubmitHandler}
-        onChange={() => {
-          setFormData({
-            fromAddress,
-            fromChain,
-            fromToken,
-            toAddress,
-            toChain,
-            toToken,
-            amount,
-          });
-        }}
-      >
+      <form className="transactionFormContainer" onSubmit={onSubmitHandler}>
         <span className="fromContainer">
           <label htmlFor="fromAddress">From Address:</label>
           <input
@@ -62,26 +44,29 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
             id="fromAddress"
             name="fromAddress"
             className="fromInput"
-            onChange={(e) => setFromAddress(e.target.value)}
+            onChange={(e) => updateFormData("fromAddress", e.target.value)}
           />
 
           <label htmlFor="fromChain">From Chain:</label>
-          <input
-            type="text"
+          <select
             id="fromChain"
-            name="fromChain"
+            onChange={(e) => updateFormData("fromChain", e.target.value)}
             className="fromInput"
-            onChange={(e) => setFromChain(e.target.value)}
-          />
-
+          >
+            <option value=""></option>
+            <option value="ethereum">Ethereum</option>
+            <option value="polygon">Polygon</option>
+          </select>
           <label htmlFor="fromToken">From Token:</label>
-          <input
-            type="text"
+          <select
             id="fromToken"
-            name="fromChain"
             className="fromInput"
-            onChange={(e) => setFromToken(e.target.value)}
-          />
+            onChange={(e) => updateFormData("fromToken", e.target.value)}
+          >
+            <option value=""></option>
+            <option value="ETH">ETH</option>
+            <option value="USDC">USDC</option>
+          </select>
         </span>
         <span className="toContainer">
           <label htmlFor="toAddress">To Address:</label>
@@ -90,38 +75,40 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
             id="toAddress"
             name="toAddress"
             className="toInput"
-            onChange={(e) => setToAddress(e.target.value)}
+            onChange={(e) => updateFormData("toAddress", e.target.value)}
           />
           <label htmlFor="toChain">To Chain:</label>
-          <input
-            type="text"
+          <select
             id="toChain"
-            name="toChain"
-            className="toInput"
-            onChange={(e) => setToChain(e.target.value)}
-          />
+            onChange={(e) => updateFormData("toChain", e.target.value)}
+          >
+            <option value=""></option>
+            <option value="ethereum">Ethereum</option>
+            <option value="polygon">Polygon</option>
+          </select>
+
           <label htmlFor="toToken">To Token:</label>
-          <input
-            type="text"
+          <select
             id="toToken"
-            name="toToken"
-            onChange={(e) => setToToken(e.target.value)}
-          />
+            onChange={(e) => updateFormData("toToken", e.target.value)}
+          >
+            <option value=""></option>
+            <option value="ETH">ETH</option>
+            <option value="USDC">USDC</option>
+          </select>
         </span>
         <span>
-          <label htmlFor="toToken">Amount:</label>
+          <label htmlFor="amount">Amount:</label>
           <input
-            type="string"
+            type="text"
             id="amount"
             name="amount"
             className="toInput"
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => updateFormData("amount", e.target.value)}
           />
           <button type="submit">Get Quote</button>
         </span>
       </form>
-
-
     </div>
   );
 };

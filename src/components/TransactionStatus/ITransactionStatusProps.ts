@@ -1,11 +1,8 @@
 import { IResponseRoute } from "../../services/IResponseRoute";
 
-export interface IQuoteProps {
+export interface ITransactionStatusProps {
   allowance: number | string;
   formFields: any;
-  processing: boolean;
   quote: IResponseRoute;
   setAllowance: (allowance: number | string) => void;
-  setTxInitiated: (txInitiated: boolean) => void;
-  txInitiated: boolean;
 }
