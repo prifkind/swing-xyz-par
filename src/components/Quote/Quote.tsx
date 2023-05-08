@@ -1,5 +1,6 @@
 import React from "react";
 import { FunctionComponent } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 import { IQuoteProps } from "./IQuoteProps";
 import { getAllowance } from "../../services/transaction";
 
@@ -10,6 +11,7 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
     quote,
     setAllowance,
     setTxInitiated,
+    stale,
     txInitiated,
   } = props;
 
@@ -19,9 +21,13 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
     setAllowance(newAllowance);
   };
 
-  if (quote.response) {
+  if (processing) {
+    return <ClipLoader />;
+  } else if (stale) {
+    return null;
+  } else if (quote.response) {
     return <div>{quote.response}</div>;
-  } else if (processing) {
+  } else {
     return (
       <div>
         <div>Bridge: {quote.bridge}</div>
@@ -33,7 +39,7 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
         )}
       </div>
     );
-  } else return null;
+  }
 };
 
 export default Quote;

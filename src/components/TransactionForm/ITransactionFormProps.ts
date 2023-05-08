@@ -5,4 +5,5 @@ export interface ITransactionFormProps {
   setFormFields: (formFields: any) => void;
   setProcessing: (processing: boolean) => void;
   setQuote: (quote: IResponseRoute) => void;
+  setStale: (stale: boolean) => void;
 }

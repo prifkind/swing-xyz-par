@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import TransactionForm from "./components/TransactionForm/TransactionForm";
-import { IResponseRoute } from "./services/IResponseRoute";
 import Quote from "./components/Quote/Quote";
+import { IResponseRoute } from "./services/IResponseRoute";
 import TransactionStatus from "./components/TransactionStatus/TransactionStatus";
 
 function App() {
@@ -9,6 +9,7 @@ function App() {
   const [formFields, setFormFields] = useState({});
   const [processing, setProcessing] = useState(false);
   const [quote, setQuote] = useState<IResponseRoute>({});
+  const [stale, setStale] = useState(true);
   const [txInitiated, setTxInitiated] = useState(false);
 
   return (
@@ -18,18 +19,19 @@ function App() {
         setFormFields={setFormFields}
         setProcessing={setProcessing}
         setQuote={setQuote}
+        setStale={setStale}
       />
-      {processing ? (
-        <Quote
-          allowance={allowance}
-          formFields={formFields}
-          processing={processing}
-          quote={quote}
-          setAllowance={setAllowance}
-          setTxInitiated={setTxInitiated}
-          txInitiated={txInitiated}
-        />
-      ) : null}
+
+      <Quote
+        formFields={formFields}
+        processing={processing}
+        quote={quote}
+        setAllowance={setAllowance}
+        setTxInitiated={setTxInitiated}
+        stale={stale}
+        txInitiated={txInitiated}
+      />
+
       {+allowance > -1 ? (
         <TransactionStatus
           allowance={allowance}
