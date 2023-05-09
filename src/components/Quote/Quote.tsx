@@ -23,7 +23,11 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
   };
 
   if (processing) {
-    return <ClipLoader size={25} className="spinner" />;
+    return (
+      <div>
+        <ClipLoader size={25} className="spinner" /> Getting quote...
+      </div>
+    );
   } else if (stale) {
     return null;
   } else if (quote.response) {
