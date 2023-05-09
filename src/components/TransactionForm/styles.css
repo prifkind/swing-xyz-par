@@ -12,11 +12,12 @@
 .fromInput {
   width: 250px;
   margin-bottom: 1%;
-  font-size: 10px;
+  font-size: 16px;
 }
 
 .fromSelect {
   width: 100%;
+  font-size: 16px;
 }
 
 .toContainer {
@@ -29,11 +30,12 @@
 .toInput {
   width: 250px;
   margin-bottom: 1%;
-  font-size: 10px;
+  font-size: 16px;
 }
 
 .toSelect {
   width: 100%;
+  font-size: 16px;
 }
 
 .amountContainer {
@@ -45,16 +47,18 @@
 
 .amountInput {
   width: 150px;
-  font-size: 10px;
+  font-size: 16px;
   margin-bottom: 5%;
 }
 
 .getQuoteButton {
   margin-bottom: 2%;
+  font-size: 16px;
 }
 
 .transferButton {
   margin-top: 1%;
+  font-size: 16px;
 }
 
 @media screen and (max-width: 774px) {
