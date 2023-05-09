@@ -23,11 +23,15 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
   };
 
   if (processing) {
-    return <ClipLoader />;
+    return <ClipLoader size={25} className="spinner" />;
   } else if (stale) {
     return null;
   } else if (quote.response) {
-    return <div className="quoteContainer">{quote.response}</div>;
+    return (
+      <div className="quoteContainer">
+        <div className="quoteResponse">{quote.response}</div>
+      </div>
+    );
   } else {
     return (
       <div className="quoteContainer">

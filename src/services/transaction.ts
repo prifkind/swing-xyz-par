@@ -31,7 +31,6 @@ export const getQuote = async (
 
     const responseRoutes = data.data.routes;
 
-    console.log(responseRoutes);
     if (responseRoutes.length > 0) {
       quote = {
         bridge: responseRoutes[0].route[0].bridge,
@@ -51,7 +50,7 @@ export const getQuote = async (
   } catch (error) {
     console.log(error);
     return (quote = {
-      response: "Unable to retrieve quote.  Please try again",
+      response: "Unable to retrieve quote.  Please verify selected chains support swaps of the chosen type, and that transfer amount is in Wei.",
     });
   }
 };
@@ -62,7 +61,6 @@ export const getAllowance = async (
 ): Promise<string> => {
   const { fromAddress, fromChain, fromToken, toChain, toToken } = formFields;
 
-  console.log(formFields, quote);
   try {
     const data = await axios.get(
       `https://stoplight.io/mocks/swing/crosschain-api/68673/v0/transfer/allowance?fromChain=${fromChain}&fromChainId=${chainId[fromChain]}&tokenAddress=${tokenAddress[fromToken]}&fromAddress=${fromAddress}&toChain=${toChain}&toChainId=${chainId[toChain]}&toTokenAddress=${tokenAddress[toToken]}&toTokenSymbol=${toToken}&tokenSymbol=${fromToken}&bridge=${quote.bridge}projectId=swing-xyz-par`,
@@ -74,7 +72,7 @@ export const getAllowance = async (
     );
 
     const response = data.data.allowance;
-    console.log(response);
+
     return response;
   } catch (error) {
     console.log(error);
