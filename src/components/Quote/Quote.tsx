@@ -1,12 +1,13 @@
 import React from "react";
 import { FunctionComponent } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
+import "./styles.css";
 import { IQuoteProps } from "./IQuoteProps";
 import { getAllowance } from "../../services/transaction";
 
 const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
   const {
-    formFields,
+    formData,
     processing,
     quote,
     setAllowance,
@@ -15,9 +16,9 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
     txInitiated,
   } = props;
 
-  const onClickHandler = async () => {
+  const onInitiateHandler = async () => {
     setTxInitiated(true);
-    const newAllowance = await getAllowance(formFields, quote);
+    const newAllowance = await getAllowance(formData, quote);
     setAllowance(newAllowance);
   };
 
@@ -26,16 +27,21 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
   } else if (stale) {
     return null;
   } else if (quote.response) {
-    return <div>{quote.response}</div>;
+    return <div className="quoteContainer">{quote.response}</div>;
   } else {
     return (
-      <div>
+      <div className="quoteContainer">
+        <h1 className="quoteHeader">Quote Details</h1>
         <div>Bridge: {quote.bridge}</div>
         <div>Bridge Fee: {quote.bridgeFee}</div>
         <div>Gas: {quote.gas}</div>
         <div>Gas USD: {quote.gasUSD}</div>
         {txInitiated ? null : (
-          <button onClick={onClickHandler}>Initiate Transfer</button>
+          <div>
+            <button onClick={onInitiateHandler} className="transferButton">
+              Initiate Transfer
+            </button>
+          </div>
         )}
       </div>
     );
