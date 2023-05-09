@@ -2,9 +2,16 @@
   margin: 2%;
 }
 
+.quoteResponse {
+  width: 75%;
+}
+
 .quoteHeader {
     margin-bottom: 1%;
     font-size: 16px;
     font-weight: bold;
 }
 
+.spinner {
+  margin-left: 2%
+}

@@ -8,7 +8,7 @@ import { status } from "../../services/status";
 const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
   props: ITransactionStatusProps
 ) => {
-  const { allowance, formData, quote, setAllowance } = props;
+  const { allowance, formData, quote, setAllowance, setTxInitiated } = props;
 
   const [txnProcessing, setTxnProcessing] = useState(false);
   const [txnStatus, setTxnStatus] = useState("");
@@ -17,15 +17,18 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
     setTxnProcessing(true);
     const txnResult: number = await postTransaction(formData, quote);
 
-    console.log(txnResult);
     if (txnResult === 200) {
-      for (let i = 0; i < status.length; i++) {
+      for (let i = 0; i < 100; i++) {
         setTimeout(() => {
           const num = Math.floor(Math.random() * status.length);
-          console.log(status[num].status);
+
           setTxnStatus(status[num].status);
         }, 1000);
-        if (txnStatus === "Completed" || txnStatus === "Refund Required") break;
+
+        if (txnStatus === "Completed" || txnStatus === "Refund Required") {
+          setTxInitiated(true);
+          break;
+        }
       }
     } else setTxnStatus("Not Sent");
   };
@@ -60,7 +63,7 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
           {txnStatus === "Completed" || txnStatus === "Refund Required" ? (
             txnStatus
           ) : (
-            <ClipLoader />
+            <ClipLoader size={25} />
           )}
         </div>
       </div>

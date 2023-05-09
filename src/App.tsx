@@ -26,10 +26,12 @@ function App() {
       <TransactionForm
         formData={formData}
         processing={processing}
+        setAllowance={setAllowance}
         setFormData={setFormData}
         setProcessing={setProcessing}
         setQuote={setQuote}
         setStale={setStale}
+        setTxInitiated={setTxInitiated}
       />
 
       <Quote
@@ -48,6 +50,7 @@ function App() {
           allowance={allowance}
           formData={formData}
           setAllowance={setAllowance}
+          setTxInitiated={setTxInitiated}
           quote={quote}
         />
       ) : null}

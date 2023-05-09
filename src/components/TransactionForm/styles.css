@@ -56,3 +56,35 @@
 .transferButton {
   margin-top: 1%;
 }
+
+@media screen and (max-width: 774px) {
+  .transactionFormContainer {
+    flex-direction: column;
+  }
+
+  .toInput {
+    font-size: large;
+  }
+
+  .toSelect {
+    width: 100%;
+    font-size: large;
+  }
+
+  .fromInput {
+    width: 100%;
+    margin-bottom: 1%;
+    font-size: large;
+  }
+
+  .fromSelect {
+    width: 100%;
+    font-size: large;
+  }
+
+  .amountInput {
+    width: 100%;
+    font-size: large;
+    margin-bottom: 5%;
+  }
+}

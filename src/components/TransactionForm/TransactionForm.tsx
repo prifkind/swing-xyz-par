@@ -8,7 +8,15 @@ import { IGetQuoteParams } from "../../services/IGetQuoteParams";
 const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   props: ITransactionFormProps
 ) => {
-  const { formData, setFormData, setProcessing, setQuote, setStale } = props;
+  const {
+    formData,
+    setAllowance,
+    setFormData,
+    setProcessing,
+    setQuote,
+    setStale,
+    setTxInitiated,
+  } = props;
 
   const onCancelHandler = () => {
     setFormData(() => ({
@@ -20,7 +28,9 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
       toChain: "",
       toToken: "",
     }));
-    console.log(`Clicked`);
+    setStale(true);
+    setAllowance(-1);
+    setTxInitiated(false)
   };
 
   const onSubmitHandler: FormEventHandler = async (
@@ -115,7 +125,7 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
           </select>
         </span>
         <span className="amountContainer">
-          <label htmlFor="amount">Amount:</label>
+          <label htmlFor="amount">Amount (Wei):</label>
           <input
             type="text"
             id="amount"
