@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import "./styles.css";
 import ClipLoader from "react-spinners/ClipLoader";
 import { ITransactionStatusProps } from "./ITransactionStatusProps";
@@ -8,28 +8,36 @@ import { status } from "../../services/status";
 const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
   props: ITransactionStatusProps
 ) => {
-  const { allowance, formData, quote, setAllowance, setTxInitiated } = props;
+  const { allowance, formData, quote, setAllowance } = props;
 
+  const [iteration, setIteration] = useState(0);
   const [txnProcessing, setTxnProcessing] = useState(false);
   const [txnStatus, setTxnStatus] = useState("");
+
+  useEffect(() => {
+    if (
+      txnProcessing &&
+      iteration < 100 &&
+      txnStatus !== "Completed" &&
+      txnStatus !== "Refund Required"
+    ) {
+      const timer = setTimeout(async () => {
+        const num = Math.floor(Math.random() * status.length);
+        setTxnStatus(status[num].status);
+
+        setIteration(iteration + 1);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [txnStatus, txnProcessing, iteration]);
 
   const onApproveHandler = async () => {
     setTxnProcessing(true);
     const txnResult: number = await postTransaction(formData, quote);
 
     if (txnResult === 200) {
-      for (let i = 0; i < 100; i++) {
-        setTimeout(() => {
-          const num = Math.floor(Math.random() * status.length);
-
-          setTxnStatus(status[num].status);
-        }, 1000);
-
-        if (txnStatus === "Completed" || txnStatus === "Refund Required") {
-          setTxInitiated(true);
-          break;
-        }
-      }
+      setIteration(0);
     } else setTxnStatus("Not Sent");
   };
 
@@ -63,7 +71,9 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
           {txnStatus === "Completed" || txnStatus === "Refund Required" ? (
             txnStatus
           ) : (
-            <ClipLoader size={25} />
+            <div>
+              <ClipLoader size={25} /> Processing transaction...
+            </div>
           )}
         </div>
       </div>
