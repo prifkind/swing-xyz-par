@@ -120,8 +120,7 @@ export const postTransaction = async (
       }
     );
 
-    console.log(data);
-    return data;
+    return data.status;
   } catch (error) {
     console.log(error);
   }

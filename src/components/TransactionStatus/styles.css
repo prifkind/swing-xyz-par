@@ -1,0 +1,16 @@
+.statusContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 2%;
+}
+
+.buttonContainer {
+    width: 50%;
+    display: flex;
+}
+
+.statusButton {
+    width: 33%;
+    margin: 1% 1% 0 0;
+}

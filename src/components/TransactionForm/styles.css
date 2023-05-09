@@ -1,5 +1,5 @@
 .transactionFormContainer {
-    display: flex;
+  display: flex;
 }
 
 .fromContainer {
@@ -10,7 +10,13 @@
 }
 
 .fromInput {
+  width: 250px;
   margin-bottom: 1%;
+  font-size: 10px;
+}
+
+.fromSelect {
+  width: 100%;
 }
 
 .toContainer {
@@ -21,5 +27,32 @@
 }
 
 .toInput {
+  width: 250px;
   margin-bottom: 1%;
+  font-size: 10px;
+}
+
+.toSelect {
+  width: 100%;
+}
+
+.amountContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 2%;
+}
+
+.amountInput {
+  width: 150px;
+  font-size: 10px;
+  margin-bottom: 5%;
+}
+
+.getQuoteButton {
+  margin-bottom: 2%;
+}
+
+.transferButton {
+  margin-top: 1%;
 }
