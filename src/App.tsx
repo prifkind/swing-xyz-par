@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { fetchChains } from "./redux/tokens";
 import TransactionForm from "./components/TransactionForm/TransactionForm";
 import Quote from "./components/Quote/Quote";
 import { IResponseRoute } from "./services/IResponseRoute";
 import TransactionStatus from "./components/TransactionStatus/TransactionStatus";
 
-function App() {
+function App(props:any) {
+  const {getChains} = props
   const [allowance, setAllowance] = useState<number | string>(-1);
   const [processing, setProcessing] = useState(false);
   const [quote, setQuote] = useState<IResponseRoute>({});
@@ -20,6 +23,10 @@ function App() {
     toChain: "",
     toToken: "",
   });
+
+  useEffect(() => {
+    getChains();
+  },[])
 
   return (
     <div className="App">
@@ -58,4 +65,16 @@ function App() {
   );
 }
 
-export default App;
+const mapState = (state: any) => {
+  return {
+    chains: state.chains.chains,
+  };
+};
+
+const mapDispatch = (dispatch: any) => {
+  return {
+    getChains: () => dispatch(fetchChains()),
+  };
+};
+
+export default connect(mapState, mapDispatch)(App);

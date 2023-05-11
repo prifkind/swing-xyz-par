@@ -1,0 +1,12 @@
+.root {
+  display: flex;
+  text-align: center;
+}
+
+@media screen and (min-width: 600px) {
+  .root {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+  }
+}

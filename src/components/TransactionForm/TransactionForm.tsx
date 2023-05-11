@@ -1,5 +1,6 @@
-import React, { FormEventHandler } from "react";
+import React, { FormEventHandler, useEffect, useState } from "react";
 import { FunctionComponent } from "react";
+import { connect } from "react-redux";
 import "./styles.css";
 import { ITransactionFormProps } from "./ITransactionFormProps";
 import { getQuote } from "../../services/transaction";
@@ -9,6 +10,7 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   props: ITransactionFormProps
 ) => {
   const {
+    chains,
     formData,
     setAllowance,
     setFormData,
@@ -17,6 +19,15 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
     setStale,
     setTxInitiated,
   } = props;
+
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    setToken(
+      chains[0].tokens[Math.floor(Math.random() * chains[0].tokens.length)]
+        .symbol
+    );
+  }, [chains]);
 
   const onCancelHandler = () => {
     setFormData(() => ({
@@ -30,7 +41,7 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
     }));
     setStale(true);
     setAllowance(-1);
-    setTxInitiated(false)
+    setTxInitiated(false);
   };
 
   const onSubmitHandler: FormEventHandler = async (
@@ -45,11 +56,21 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
     setProcessing(false);
   };
 
+  console.log(token);
   const updateFormData = (key: string, value: string) => {
-    setFormData((prevState: IGetQuoteParams) => ({
-      ...prevState,
-      [key]: value,
-    }));
+    if (key === "fromChain" && value === "polygon") {
+      setFormData((prevState: IGetQuoteParams) => ({
+        ...prevState,
+        [key]: value,
+        toChain: "binanceSmartChain",
+        toToken: `${token}`,
+      }));
+    } else {
+      setFormData((prevState: IGetQuoteParams) => ({
+        ...prevState,
+        [key]: value,
+      }));
+    }
     setStale(true);
   };
 
@@ -75,7 +96,6 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
             value={formData.fromChain}
           >
             <option value=""></option>
-            <option value="ethereum">Ethereum</option>
             <option value="polygon">Polygon</option>
           </select>
           <label htmlFor="fromToken">From Token:</label>
@@ -86,7 +106,6 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
             value={formData.fromToken}
           >
             <option value=""></option>
-            <option value="ETH">ETH</option>
             <option value="USDC">USDC</option>
           </select>
         </span>
@@ -107,9 +126,12 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
             onChange={(e) => updateFormData("toChain", e.target.value)}
             value={formData.toChain}
           >
-            <option value=""></option>
-            <option value="ethereum">Ethereum</option>
-            <option value="polygon">Polygon</option>
+            <option
+              value={
+                formData.fromChain === "polygon" ? "Binance Smart Chain" : ""
+              }
+            ></option>
+            <option value="binanceSmartChain">Binance Smart Chain</option>
           </select>
 
           <label htmlFor="toToken">To Token:</label>
@@ -120,8 +142,7 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
             value={formData.toToken}
           >
             <option value=""></option>
-            <option value="ETH">ETH</option>
-            <option value="USDC">USDC</option>
+            <option value={`${token}`}>{`${token}`}</option>
           </select>
         </span>
         <span className="amountContainer">
@@ -150,4 +171,9 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   );
 };
 
-export default TransactionForm;
+const mapState = (state: any) => {
+  return {
+    chains: state.chains.chains,
+  };
+};
+export default connect(mapState)(TransactionForm);
