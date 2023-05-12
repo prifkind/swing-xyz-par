@@ -2,13 +2,25 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import "./styles.css";
 import ClipLoader from "react-spinners/ClipLoader";
 import { ITransactionStatusProps } from "./ITransactionStatusProps";
-import { postTransaction } from "../../services/transaction";
 import { status } from "../../services/status";
+import { connect } from "react-redux";
+import { IGetQuoteParams } from "../../services/IGetQuoteParams";
+import {
+  approveTokenAndPostTransaction,
+} from "../../redux/transaction";
+import { getMetamaskApproval } from "../../redux/wallet";
 
 const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
   props: ITransactionStatusProps
 ) => {
-  const { allowance, formData, quote, setAllowance } = props;
+  const {
+    allowance,
+    approval,
+    approveTokenAndPostTransaction,
+    formData,
+    metamaskApproval,
+    route,
+  } = props;
 
   const [iteration, setIteration] = useState(0);
   const [txnProcessing, setTxnProcessing] = useState(false);
@@ -34,24 +46,31 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
 
   const onApproveHandler = async () => {
     setTxnProcessing(true);
-    const txnResult: number = await postTransaction(formData, quote);
+    await metamaskApproval(
+      formData.fromTokenAddress,
+      formData.fromAddress,
+      formData.amountWei
+    );
 
-    if (txnResult === 200) {
-      setIteration(0);
-    } else setTxnStatus("Not Sent");
+    await approveTokenAndPostTransaction(formData, route, approval);
   };
 
   const onRejectHandler = () => {
-    setAllowance(-1);
     alert("Transaction Rejected");
   };
 
-  if (formData.amount > allowance && !txnProcessing && txnStatus === "") {
+  if (
+    formData.amount &&
+    formData.amount > +allowance.allowance &&
+    !txnProcessing &&
+    txnStatus === ""
+  ) {
     return (
       <div className="statusContainer">
         <div>
-          The transaction amount exceeds the allowance configured. Do you wish
-          to approve the transaction?
+          The transaction amount exceeds the allowance configured (current
+          allowance - {allowance.allowance} ). Do you wish to approve the
+          transaction?
         </div>
         <div className="buttonContainer">
           <button className="statusButton" onClick={onApproveHandler}>
@@ -81,4 +100,33 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
   }
 };
 
-export default TransactionStatus;
+const mapState = (state: any) => {
+  return {
+    allowance: state.allowance.allowance,
+    approval: state.transaction.approval,
+    chains: state.chains.chains,
+    formData: state.quote.form,
+    quote: state.quote.quote,
+    route: state.transaction.route,
+  };
+};
+
+const mapDispatch = (dispatch: any) => {
+  return {
+    approveTokenAndPostTransaction: (
+      formData: IGetQuoteParams,
+      route: any,
+      approval: any
+    ) => dispatch(approveTokenAndPostTransaction(formData, route, approval)),
+    metamaskApproval: (
+      fromTokenAddress: string,
+      fromWalletAddress: string,
+      amountWei: number
+    ) =>
+      dispatch(
+        getMetamaskApproval(fromTokenAddress, fromWalletAddress, amountWei)
+      ),
+  };
+};
+
+export default connect(mapState, mapDispatch)(TransactionStatus);

@@ -1,10 +1,11 @@
+import { IReduxState } from "../../redux/IReduxState";
 import { IGetQuoteParams } from "../../services/IGetQuoteParams";
-import { IResponseRoute } from "../../services/IResponseRoute";
 
-export interface ITransactionStatusProps {
-  allowance: number | string;
+export interface ITransactionStatusProps extends IReduxState {
+  approval: any;
+  approveTokenAndPostTransaction: (formData: IGetQuoteParams, route: any, approval: any) => any;
   formData: IGetQuoteParams;
-  quote: IResponseRoute;
-  setAllowance: (allowance: number | string) => void;
+  metamaskApproval: (tokenAddress: string, walletAddress: string, amountWei: number) => any;
+  route: any;
   setTxInitiated: (txInitiated: boolean) => void;
 }

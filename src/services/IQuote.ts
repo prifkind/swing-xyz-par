@@ -1,4 +1,4 @@
-export interface IResponseRoute {
+export interface IQuote {
   bridge?: string;
   bridgeFee?: string;
   bridgeTokenAddress?: string;
