@@ -1,5 +1,8 @@
 import { IChain } from "./IChain";
 
 export interface IReduxState {
-  chains: IChain[];
+  allowance?: any;
+  chains?: IChain[];
+  quote?: any;
+  transaction?: any;
 }

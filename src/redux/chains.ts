@@ -9,7 +9,6 @@ const BASE_URL = process.env.REACT_APP_BASE_URL;
 const GET_CHAINS = "GET_CHAINS";
 
 // Action Creators
-
 const _getChains = (chains: Array<IChain>) => {
   return {
     type: GET_CHAINS,
