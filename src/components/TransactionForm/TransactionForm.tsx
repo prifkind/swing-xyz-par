@@ -3,42 +3,83 @@ import { FunctionComponent } from "react";
 import { connect } from "react-redux";
 import "./styles.css";
 import { ITransactionFormProps } from "./ITransactionFormProps";
-import { getQuote } from "../../services/transaction";
 import { IGetQuoteParams } from "../../services/IGetQuoteParams";
+import { _formData, fetchQuote } from "../../redux/quote";
+import { _setAllowance } from "../../redux/allowance";
+import { connectMetamask } from "../../redux/wallet";
 
 const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   props: ITransactionFormProps
 ) => {
   const {
     chains,
-    formData,
+    getQuote,
+    postFormData,
     setAllowance,
-    setFormData,
     setProcessing,
-    setQuote,
     setStale,
     setTxInitiated,
   } = props;
 
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState({ address: "", decimals: 0, symbol: "" });
+  const [formData, setFormData] = useState({
+    amount: null,
+    amountWei: null,
+    fromAddress: "",
+    fromChain: "",
+    fromChainId: 0,
+    fromToken: "",
+    fromTokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+    toAddress: "",
+    toChain: "",
+    toChainId: 0,
+    toToken: "",
+    toTokenAddress: "",
+  });
 
   useEffect(() => {
-    setToken(
-      chains[0].tokens[Math.floor(Math.random() * chains[0].tokens.length)]
-        .symbol
-    );
+    if (chains && chains.length > 0) {
+      setToken(
+        chains[0].tokens[Math.floor(Math.random() * chains[0].tokens.length)]
+      );
+    }
   }, [chains]);
 
+  const updateFormData = (key: string, value: string | number) => {
+    if (key === "fromChain" && value === "polygon") {
+      setFormData({
+        ...formData,
+        [key]: value,
+        fromChainId: 137,
+        toChain: "bsc",
+        toChainId: 56,
+        toToken: `${token}`,
+        toTokenAddress: `${token.address}`,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [key]: value,
+      });
+    }
+    setStale(true);
+  };
+
   const onCancelHandler = () => {
-    setFormData(() => ({
-      amount: "",
+    setFormData({
+      amount: null,
+      amountWei: null,
       fromAddress: "",
       fromChain: "",
+      fromChainId: 0,
       fromToken: "",
+      fromTokenAddress: "",
       toAddress: "",
       toChain: "",
+      toChainId: 0,
       toToken: "",
-    }));
+      toTokenAddress: "",
+    });
     setStale(true);
     setAllowance(-1);
     setTxInitiated(false);
@@ -48,30 +89,13 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
     event: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault();
+    connectMetamask()
     setProcessing(true);
     setStale(false);
 
-    let newQuote = await getQuote(formData);
-    setQuote(newQuote);
+    postFormData(formData);
+    getQuote(formData);
     setProcessing(false);
-  };
-
-  console.log(token);
-  const updateFormData = (key: string, value: string) => {
-    if (key === "fromChain" && value === "polygon") {
-      setFormData((prevState: IGetQuoteParams) => ({
-        ...prevState,
-        [key]: value,
-        toChain: "binanceSmartChain",
-        toToken: `${token}`,
-      }));
-    } else {
-      setFormData((prevState: IGetQuoteParams) => ({
-        ...prevState,
-        [key]: value,
-      }));
-    }
-    setStale(true);
   };
 
   return (
@@ -131,7 +155,7 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
                 formData.fromChain === "polygon" ? "Binance Smart Chain" : ""
               }
             ></option>
-            <option value="binanceSmartChain">Binance Smart Chain</option>
+            <option value="bsc">Binance Smart Chain</option>
           </select>
 
           <label htmlFor="toToken">To Token:</label>
@@ -142,18 +166,31 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
             value={formData.toToken}
           >
             <option value=""></option>
-            <option value={`${token}`}>{`${token}`}</option>
+            <option value={`${token.symbol}`}>{`${token.symbol}`}</option>
           </select>
         </span>
         <span className="amountContainer">
-          <label htmlFor="amount">Amount (Wei):</label>
+          <label htmlFor="amount">Token Amount:</label>
           <input
-            type="text"
+            type="string"
             id="amount"
             name="amount"
             className="amountInput"
-            onChange={(e) => updateFormData("amount", e.target.value)}
-            value={formData.amount}
+            onChange={(e) => {
+              updateFormData("amount", +e.target.value);
+              // handleAmountChange(+e.target.value);
+            }}
+            value={formData.amount || ""}
+          />
+          <label htmlFor="amountWei">Amount Wei:</label>
+          <input
+            type="number"
+            disabled={true}
+            value={
+              formData.amount
+                ? formData.amount * Math.pow(10, token.decimals)
+                : ""
+            }
           />
           <button type="submit" className="getQuoteButton">
             Get Quote
@@ -174,6 +211,16 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
 const mapState = (state: any) => {
   return {
     chains: state.chains.chains,
+    quote: state.quote.quote,
   };
 };
-export default connect(mapState)(TransactionForm);
+
+const mapDispatch = (dispatch: any) => {
+  return {
+    getQuote: (formData: IGetQuoteParams) => dispatch(fetchQuote(formData)),
+    postFormData: (formData: IGetQuoteParams) => dispatch(_formData(formData)),
+    setAllowance: (allowance: number) => dispatch(_setAllowance(allowance)),
+    connectWallet: () => connectMetamask(),
+  };
+};
+export default connect(mapState, mapDispatch)(TransactionForm);

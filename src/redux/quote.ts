@@ -28,7 +28,6 @@ export const fetchQuote = (formInfo: any) => {
     const { data } = await axios.get(
       `${BASE_URL}/transfer/quote?fromChain=${formInfo.fromChain}&fromChainId=${formInfo.fromChainId}&fromTokenAddress=${formInfo.fromTokenAddress}&fromUserAddress=${formInfo.fromAddress}&toChain=${formInfo.toChain}&toChainId=${formInfo.toChainId}&toTokenAddress=${formInfo.toTokenAddress}&toTokenSymbol=${formInfo.toToken}&tokenAmount=${formInfo.amount}&tokenSymbol=${formInfo.fromToken}&toUserAddress=${formInfo.toAddress}&projectId=swing-xyz-par`
     );
-    console.log(data)
     dispatch(_getQuote(data));
   };
 };
@@ -43,7 +42,6 @@ const initialState = {
 export default function quoteReducer(state = initialState, action: any) {
   switch (action.type) {
     case GET_QUOTE: {
-      console.log(action)
       const routes = action.quote.routes.map((route: any) => route);
       return {
         ...state,

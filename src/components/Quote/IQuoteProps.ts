@@ -1,12 +1,11 @@
+import { IReduxState } from "../../redux/IReduxState";
 import { IGetQuoteParams } from "../../services/IGetQuoteParams";
-import { IResponseRoute } from "../../services/IResponseRoute";
 
-export interface IQuoteProps {
-  allowance: number | string;
+export interface IQuoteProps extends IReduxState{
   formData: IGetQuoteParams;
+  getAllowance: (formData: IGetQuoteParams, routes: any) => any;
   processing: boolean;
-  quote: IResponseRoute;
-  setAllowance: (allowance: number | string) => void;
+  routes: Array<any>;
   setFormData: (formFields: IGetQuoteParams) => void;
   setTxInitiated: (txInitiated: boolean) => void;
   stale: boolean;

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { IGetQuoteParams } from "./IGetQuoteParams";
-import { IResponseRoute } from "./IResponseRoute";
+import { IQuote } from "./IQuote";
 
 const chainId: Record<string, number> = {
   ethereum: 1,
@@ -14,11 +14,11 @@ const tokenAddress: Record<string, string> = {
 
 export const getQuote = async (
   params: IGetQuoteParams
-): Promise<IResponseRoute> => {
+): Promise<IQuote> => {
   const { fromAddress, fromChain, fromToken, toChain, toToken, amount } =
     params;
 
-  let quote: IResponseRoute = {};
+  let quote: IQuote = {};
   try {
     const data = await axios.get(
       `https://swap.prod.swing.xyz/v0/transfer/quote?fromChain=${fromChain}&fromChainId=${chainId[fromChain]}&fromTokenAddress=${tokenAddress[fromToken]}&fromUserAddress=${fromAddress}&toChain=${toChain}&toChainId=${chainId[toChain]}&toTokenAddress=${tokenAddress[toToken]}&toTokenSymbol=${toToken}&tokenAmount=${amount}&tokenSymbol=${fromToken}&projectId=swing-xyz-par`,
@@ -57,7 +57,7 @@ export const getQuote = async (
 
 export const getAllowance = async (
   formFields: IGetQuoteParams,
-  quote: IResponseRoute
+  quote: IQuote
 ): Promise<string> => {
   const { fromAddress, fromChain, fromToken, toChain, toToken } = formFields;
 
@@ -82,7 +82,7 @@ export const getAllowance = async (
 
 export const postTransaction = async (
   formFields: IGetQuoteParams,
-  quote: IResponseRoute
+  quote: IQuote
 ): Promise<any> => {
   try {
     const data = await axios.post(

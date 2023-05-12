@@ -1,10 +1,10 @@
+import { IReduxState } from "../../redux/IReduxState";
 import { IGetQuoteParams } from "../../services/IGetQuoteParams";
-import { IResponseRoute } from "../../services/IResponseRoute";
+import { IQuote } from "../../services/IQuote";
 
-export interface ITransactionStatusProps {
-  allowance: number | string;
+export interface ITransactionStatusProps extends IReduxState {
   formData: IGetQuoteParams;
-  quote: IResponseRoute;
-  setAllowance: (allowance: number | string) => void;
+  postTransaction: (formData: IGetQuoteParams, quote: IQuote) => any
+  quote: IQuote;
   setTxInitiated: (txInitiated: boolean) => void;
 }

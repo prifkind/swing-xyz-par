@@ -1,7 +1,7 @@
-import { IResponseRoute } from "./IResponseRoute";
+import { IQuote } from "./IQuote";
 import { IGetQuoteParams } from "./IGetQuoteParams";
 
 export interface IGetAllowancesParams {
   formFields: IGetQuoteParams;
-  quote: IResponseRoute;
+  quote: IQuote;
 }

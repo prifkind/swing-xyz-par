@@ -2,13 +2,16 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import "./styles.css";
 import ClipLoader from "react-spinners/ClipLoader";
 import { ITransactionStatusProps } from "./ITransactionStatusProps";
-import { postTransaction } from "../../services/transaction";
 import { status } from "../../services/status";
+import { connect } from "react-redux";
+import { IGetQuoteParams } from "../../services/IGetQuoteParams";
+import { IQuote } from "../../services/IQuote";
+import { postTransaction } from "../../redux/transaction";
 
 const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
   props: ITransactionStatusProps
 ) => {
-  const { allowance, formData, quote, setAllowance } = props;
+  const { allowance, formData, postTransaction, quote } = props;
 
   const [iteration, setIteration] = useState(0);
   const [txnProcessing, setTxnProcessing] = useState(false);
@@ -32,6 +35,10 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
     }
   }, [txnStatus, txnProcessing, iteration]);
 
+  useEffect(() => {
+    console.log(allowance);
+  }, [allowance]);
+
   const onApproveHandler = async () => {
     setTxnProcessing(true);
     const txnResult: number = await postTransaction(formData, quote);
@@ -42,11 +49,15 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
   };
 
   const onRejectHandler = () => {
-    setAllowance(-1);
     alert("Transaction Rejected");
   };
 
-  if (formData.amount > allowance && !txnProcessing && txnStatus === "") {
+  if (
+    formData.amount &&
+    formData.amount > +allowance.allowance &&
+    !txnProcessing &&
+    txnStatus === ""
+  ) {
     return (
       <div className="statusContainer">
         <div>
@@ -81,4 +92,20 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
   }
 };
 
-export default TransactionStatus;
+const mapState = (state: any) => {
+  return {
+    allowance: state.allowance.allowance,
+    chains: state.chains.chains,
+    formData: state.quote.form,
+    quote: state.quote.quote,
+  };
+};
+
+const mapDispatch = (dispatch: any) => {
+  return {
+    postTransaction: (formData: IGetQuoteParams, quote: IQuote) =>
+      dispatch(postTransaction(formData, quote)),
+  };
+};
+
+export default connect(mapState, mapDispatch)(TransactionStatus);
