@@ -26,6 +26,7 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   const [formData, setFormData] = useState<{
     amount: number | null;
     amountWei: number | null;
+    decimals: number;
     fromAddress: string;
     fromChain: string;
     fromChainId: number;
@@ -39,6 +40,7 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   }>({
     amount: null,
     amountWei: null,
+    decimals: 18,
     fromAddress: "",
     fromChain: "",
     fromChainId: 0,
@@ -60,6 +62,7 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
       const tokenDecimals = chains[0].tokens.filter(
         (token) => token.symbol === formData.toToken
       )[0].decimals;
+
       setToken({
         address: tokenAddress,
         decimals: tokenDecimals,
@@ -68,6 +71,7 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
 
       setFormData({
         ...formData,
+        decimals: tokenDecimals,
         toTokenAddress: tokenAddress,
       });
     }
@@ -103,6 +107,7 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
     setFormData({
       amount: null,
       amountWei: null,
+      decimals: 18,
       fromAddress: "",
       fromChain: "",
       fromChainId: 0,
@@ -122,13 +127,13 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   const onSubmitHandler: FormEventHandler = async (
     event: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
-    connectWallet();
     event.preventDefault();
+    connectWallet();
     setProcessing(true);
     setStale(false);
 
     postFormData(formData);
-    getQuote(formData);
+    await getQuote(formData);
     setProcessing(false);
   };
 

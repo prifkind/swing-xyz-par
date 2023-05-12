@@ -53,48 +53,104 @@ export const connectMetamask = () => async (dispatch: any) => {
   }
 };
 
+// export const getMetamaskApproval =
+//   (
+//     tokenAddress: string,
+//     walletAddress: string,
+//     amountWei: number,
+//     decimals: number
+//   ) =>
+//   async (dispatch: any) => {
+//     // @ts-ignore: Unreachable code error
+
+//     try {
+//       const provider = new ethers.providers.Web3Provider(
+//         (window as any).ethereum
+//       );
+//       const signer = provider.getSigner();
+
+//       const erc20Abi = [
+//         // Some details about the token
+//         "function name() view returns (string)",
+//         "function symbol() view returns (string)",
+
+//         // Get the account balance
+//         "function balanceOf(address) view returns (uint)",
+
+//         // Approve the spending of the token
+//         "function approve(address spender, uint amount) returns (bool)",
+//       ];
+
+//       const tokenContract = new ethers.Contract(tokenAddress, erc20Abi, signer);
+
+//       const amountToApprove = ethers.utils.parseUnits(
+//         amountWei.toString(),
+//         decimals
+//       );
+
+//       const approvalTx = await tokenContract.approve(
+//         walletAddress,
+//         amountToApprove
+//       );
+
+//       const receipt = await approvalTx.wait();
+//       console.log(amountWei, decimals, amountToApprove)
+//       if (receipt) {
+//         dispatch(_metamaskApproval(receipt));
+//       }
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
+
 export const getMetamaskApproval =
-  (tokenAddress: string, walletAddress: string, amountWei: number) =>
+  (
+    tokenAddress: string,
+    walletAddress: string,
+    amountWei: number,
+    decimals: number
+  ) =>
   async (dispatch: any) => {
     // @ts-ignore: Unreachable code error
 
     try {
-      const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+      const provider = new ethers.providers.Web3Provider(
+        (window as any).ethereum
+      );
       const signer = provider.getSigner();
 
       const erc20Abi = [
-        // Some details about the token
-        "function name() view returns (string)",
-        "function symbol() view returns (string)",
-
-        // Get the account balance
-        "function balanceOf(address) view returns (uint)",
-
         // Approve the spending of the token
-        "function approve(address spender, uint amount) returns (bool)",
+        "function approve(address spender, uint256 amount) public returns (bool)",
       ];
 
-      const tokenContract = new ethers.Contract(tokenAddress, erc20Abi, signer);
-
-      const amountToApprove = ethers.utils.parseUnits(
-        amountWei.toString(),
-        "18"
-      );
-
-      const approvalTx = await tokenContract.approve(
+      const iface = new ethers.utils.Interface(erc20Abi);
+      const data = iface.encodeFunctionData("approve", [
         walletAddress,
-        amountToApprove
-      );
+        ethers.utils.parseUnits(amountWei.toString(), decimals),
+      ]);
 
-      const receipt = await approvalTx.wait();
-      dispatch(_metamaskApproval(receipt));
+      const transaction = {
+        to: tokenAddress,
+        data: data,
+      };
+
+      const txResponse = await signer.sendTransaction(transaction);
+      const receipt = await provider.waitForTransaction(txResponse.hash);
+
+      if (receipt) {
+        dispatch(_metamaskApproval(receipt));
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
 // Initial State
-const initialState = {};
+const initialState = {
+  account: "",
+  receipt: {},
+};
 
 // Reducer
 export default function walletReducer(state = initialState, action: any) {
