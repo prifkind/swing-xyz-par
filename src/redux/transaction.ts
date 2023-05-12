@@ -49,8 +49,8 @@ export const postTransaction = (
   return async (dispatch: any) => {
     try {
       const { data } = await axios.post(
-        `${BASE_URL}/transfer/send`,
-        // `https://stoplight.io/mocks/swing/crosschain-api/68673/v0/transfer/send`,
+        // `${BASE_URL}/transfer/send`,
+        `https://stoplight.io/mocks/swing/crosschain-api/68673/v0/transfer/send`,
         {
           tokenSymbol: formData.fromToken,
           toTokenSymbol: formData.toToken,

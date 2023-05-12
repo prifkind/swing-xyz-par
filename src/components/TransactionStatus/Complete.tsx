@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect } from "react";
 import { connect } from "react-redux";
 import { ICompleteProps } from "./ICompleteProps";
+import { Link } from "react-router-dom";
 
 const Complete: FunctionComponent<ICompleteProps> = (props: ICompleteProps) => {
   const { transaction } = props;
@@ -8,10 +9,12 @@ const Complete: FunctionComponent<ICompleteProps> = (props: ICompleteProps) => {
   useEffect(() => {
     console.log(transaction.tx)
   })
+
   return (
     <div>
       <div>Transaction complete</div>
-      <div>Hash: {transaction.tx}</div>
+      <div>Hash: {transaction.tx.data}</div>
+      <Link to="/">Go Home</Link>
     </div>
   );
 };

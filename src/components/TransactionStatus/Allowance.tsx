@@ -42,7 +42,7 @@ const Allowance: FunctionComponent<IAllowanceProps> = (
           <ClipLoader size={25} className="spinner" />
         </span>
         <div>Processing transaction</div>
-        <div>This is step 1/4</div>
+        <div>This is step 2/4</div>
       </div>
     );
   } else
