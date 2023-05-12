@@ -26,7 +26,7 @@ export const _formData = (formData: IGetQuoteParams) => {
 export const fetchQuote = (formInfo: any) => {
   return async (dispatch: any) => {
     const { data } = await axios.get(
-      `${BASE_URL}/transfer/quote?fromChain=${formInfo.fromChain}&fromChainId=${formInfo.fromChainId}&fromTokenAddress=${formInfo.fromTokenAddress}&fromUserAddress=${formInfo.fromAddress}&toChain=${formInfo.toChain}&toChainId=${formInfo.toChainId}&toTokenAddress=${formInfo.toTokenAddress}&toTokenSymbol=${formInfo.toToken}&tokenAmount=${formInfo.amount}&tokenSymbol=${formInfo.fromToken}&toUserAddress=${formInfo.toAddress}&projectId=swing-xyz-par`
+      `${BASE_URL}/transfer/quote?fromChain=${formInfo.fromChain}&fromChainId=${formInfo.fromChainId}&fromTokenAddress=${formInfo.fromTokenAddress}&fromUserAddress=${formInfo.fromAddress}&toChain=${formInfo.toChain}&toChainId=${formInfo.toChainId}&toTokenAddress=${formInfo.toTokenAddress}&toTokenSymbol=${formInfo.toToken}&tokenAmount=${formInfo.amountWei}&tokenSymbol=${formInfo.fromToken}&toUserAddress=${formInfo.toAddress}&projectId=swing-xyz-par`
     );
     dispatch(_getQuote(data));
   };

@@ -19,10 +19,24 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
     setProcessing,
     setStale,
     setTxInitiated,
+    connectWallet,
   } = props;
 
   const [token, setToken] = useState({ address: "", decimals: 0, symbol: "" });
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    amount: number | null;
+    amountWei: number | null;
+    fromAddress: string;
+    fromChain: string;
+    fromChainId: number;
+    fromToken: string;
+    fromTokenAddress: string;
+    toAddress: string;
+    toChain: string;
+    toChainId: number;
+    toToken: string;
+    toTokenAddress: string;
+  }>({
     amount: null,
     amountWei: null,
     fromAddress: "",
@@ -38,14 +52,28 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   });
 
   useEffect(() => {
-    if (chains && chains.length > 0) {
-      setToken(
-        chains[0].tokens[Math.floor(Math.random() * chains[0].tokens.length)]
-      );
-    }
-  }, [chains]);
+    if (chains && chains.length > 0 && formData.toToken.length > 0) {
+      const tokenAddress = chains[0].tokens.filter(
+        (token) => token.symbol === formData.toToken
+      )[0].address;
 
-  const updateFormData = (key: string, value: string | number) => {
+      const tokenDecimals = chains[0].tokens.filter(
+        (token) => token.symbol === formData.toToken
+      )[0].decimals;
+      setToken({
+        address: tokenAddress,
+        decimals: tokenDecimals,
+        symbol: formData.toToken,
+      });
+
+      setFormData({
+        ...formData,
+        toTokenAddress: tokenAddress,
+      });
+    }
+  }, [chains, formData.toToken]);
+
+  const updateFormData = (key: any, value: string | number) => {
     if (key === "fromChain" && value === "polygon") {
       setFormData({
         ...formData,
@@ -53,13 +81,19 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
         fromChainId: 137,
         toChain: "bsc",
         toChainId: 56,
-        toToken: `${token}`,
-        toTokenAddress: `${token.address}`,
+      });
+    } else if (key === "amount") {
+      setFormData({
+        ...formData,
+        [key]: value,
+        amountWei: +value * Math.pow(10, token.decimals),
       });
     } else {
       setFormData({
         ...formData,
         [key]: value,
+        amount: null,
+        amountWei: null,
       });
     }
     setStale(true);
@@ -88,8 +122,8 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
   const onSubmitHandler: FormEventHandler = async (
     event: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
+    connectWallet();
     event.preventDefault();
-    connectMetamask()
     setProcessing(true);
     setStale(false);
 
@@ -166,19 +200,28 @@ const TransactionForm: FunctionComponent<ITransactionFormProps> = (
             value={formData.toToken}
           >
             <option value=""></option>
-            <option value={`${token.symbol}`}>{`${token.symbol}`}</option>
+            {chains && chains.length > 0 ? (
+              chains[0].tokens.map((token, index) => {
+                return (
+                  <option key={index} value={token.symbol}>
+                    {token.symbol}
+                  </option>
+                );
+              })
+            ) : (
+              <option value=""></option>
+            )}
           </select>
         </span>
         <span className="amountContainer">
           <label htmlFor="amount">Token Amount:</label>
           <input
-            type="string"
+            type="number"
             id="amount"
             name="amount"
             className="amountInput"
             onChange={(e) => {
               updateFormData("amount", +e.target.value);
-              // handleAmountChange(+e.target.value);
             }}
             value={formData.amount || ""}
           />
@@ -212,6 +255,7 @@ const mapState = (state: any) => {
   return {
     chains: state.chains.chains,
     quote: state.quote.quote,
+    wallet: state.wallet.account,
   };
 };
 
@@ -220,7 +264,7 @@ const mapDispatch = (dispatch: any) => {
     getQuote: (formData: IGetQuoteParams) => dispatch(fetchQuote(formData)),
     postFormData: (formData: IGetQuoteParams) => dispatch(_formData(formData)),
     setAllowance: (allowance: number) => dispatch(_setAllowance(allowance)),
-    connectWallet: () => connectMetamask(),
+    connectWallet: () => dispatch(connectMetamask()),
   };
 };
 export default connect(mapState, mapDispatch)(TransactionForm);

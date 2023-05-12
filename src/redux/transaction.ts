@@ -1,64 +1,129 @@
 import axios from "axios";
 import { IGetQuoteParams } from "../services/IGetQuoteParams";
-import { IQuote } from "../services/IQuote";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 // Actions
+const SELECT_ROUTE = "SELECT_ROUTE";
+const APPROVE_TOKEN = "APPROVE_TOKEN";
 const POST_TRANSACTION = "POST_TRANSACTION";
 
 // Action Creators
+export const _selectRoute = (route: any) => {
+  return {
+    type: SELECT_ROUTE,
+    payload: route,
+  };
+};
+
+const _approveToken = (approval: any) => {
+  return {
+    type: APPROVE_TOKEN,
+    payload: approval,
+  };
+};
+
 const _postTransaction = (transaction: any) => {
   return {
     type: POST_TRANSACTION,
-    transaction: transaction,
+    payload: transaction,
   };
 };
 
 // Thunks
-export const postTransaction = (formData: IGetQuoteParams, quote: IQuote) => {
+export const approveToken = (formData: IGetQuoteParams, route: any) => {
+  return async (dispatch: any) => {
+    const { data } = await axios.get(
+      `${BASE_URL}/transfer/approve?bridge=${route.bridge}&fromAddress=${formData.fromAddress}&fromChain=${formData.fromChain}&fromChainId=${formData.fromChainId}&toChain=${formData.toChain}&toChainId=${formData.toChainId}&toTokenAddress=${formData.toTokenAddress}&toTokenSymbol=${formData.toToken}&tokenAddress=${formData.fromTokenAddress}&tokenAmount=${formData.amountWei}&tokenSymbol=${formData.fromToken}`
+    );
+
+    dispatch(_approveToken(data));
+  };
+};
+
+export const postTransaction = (
+  formData: IGetQuoteParams,
+  route: any,
+  contract: any
+) => {
+  console.log(formData, route, contract);
   return async (dispatch: any) => {
     const { data } = await axios.post(
-      `${BASE_URL}/transer/send`,
-      { headers: { "Content-Type": "application/json" } },
+      `${BASE_URL}/transfer/send`,
       {
-        data: {
-          tokenSymbol: formData.fromToken,
-          toTokenSymbol: formData.toToken,
-          fromTokenAddress: formData.fromTokenAddress,
-          tokenAmount: formData.amount,
-          fromUserAddress: formData.fromAddress,
-          fromChain: formData.fromChain,
-          fromChainId: formData.fromChainId,
-          toChain: formData.toChain,
-          toChainId: formData.fromChainId,
-          toTokenAddress: formData.toTokenAddress,
-          route: [
-            {
-              bridge: quote.bridge,
-              bridgeTokenAddress: "",
-              name: "",
-              part: "",
-            },
-          ],
+        tokenSymbol: formData.fromToken,
+        toTokenSymbol: formData.toToken,
+        tokenAmount: `${formData.amountWei}`,
+        fromChain: formData.fromChain,
+        fromChainId: formData.fromChainId,
+        fromTokenAddress: formData.fromTokenAddress,
+        fromUserAddress: formData.fromAddress,
+        toChain: formData.toChain,
+        toChainId: formData.toChainId,
+        toTokenAddress: formData.toTokenAddress,
+        route: [
+          {
+            bridge: route.bridge,
+            bridgeTokenAddress: route.bridgeTokenAddress,
+            name: route.name,
+            steps: route.steps,
+            part: route.part,
+          },
+        ],
+        toContractAddress: contract.to,
+        toContractCallData: contract.data,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
       }
     );
+
+    dispatch(_postTransaction(data));
+  };
+};
+
+export const approveTokenAndPostTransaction = (
+  formData: IGetQuoteParams,
+  route: any,
+  contract: any
+) => {
+  return async (dispatch: any, getState: any) => {
+    await dispatch(approveToken(formData, route));
+    const updatedState = getState();
+    const updatedApproval = updatedState.transaction.approval;
+    dispatch(postTransaction(formData, route, updatedApproval));
   };
 };
 
 // Initial State
 const initialState = {
-  transaction: [],
+  approval: {},
+  route: {},
+  transaction: {},
 };
 
 //Reducer
 export default function transactionReducer(state = initialState, action: any) {
   switch (action.type) {
+    case SELECT_ROUTE: {
+      return {
+        ...state,
+        route: action.payload,
+      };
+    }
+    case APPROVE_TOKEN: {
+      return {
+        ...state,
+        approval: action.payload,
+      };
+    }
     case POST_TRANSACTION: {
       return {
         ...state,
-        transaction: action.transaction,
+        transaction: action.payload,
       };
     }
     default:

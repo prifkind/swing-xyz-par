@@ -5,13 +5,22 @@ import { ITransactionStatusProps } from "./ITransactionStatusProps";
 import { status } from "../../services/status";
 import { connect } from "react-redux";
 import { IGetQuoteParams } from "../../services/IGetQuoteParams";
-import { IQuote } from "../../services/IQuote";
-import { postTransaction } from "../../redux/transaction";
+import {
+  approveTokenAndPostTransaction,
+} from "../../redux/transaction";
+import { getMetamaskApproval } from "../../redux/wallet";
 
 const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
   props: ITransactionStatusProps
 ) => {
-  const { allowance, formData, postTransaction, quote } = props;
+  const {
+    allowance,
+    approval,
+    approveTokenAndPostTransaction,
+    formData,
+    metamaskApproval,
+    route,
+  } = props;
 
   const [iteration, setIteration] = useState(0);
   const [txnProcessing, setTxnProcessing] = useState(false);
@@ -35,17 +44,15 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
     }
   }, [txnStatus, txnProcessing, iteration]);
 
-  useEffect(() => {
-    console.log(allowance);
-  }, [allowance]);
-
   const onApproveHandler = async () => {
     setTxnProcessing(true);
-    const txnResult: number = await postTransaction(formData, quote);
+    await metamaskApproval(
+      formData.fromTokenAddress,
+      formData.fromAddress,
+      formData.amountWei
+    );
 
-    if (txnResult === 200) {
-      setIteration(0);
-    } else setTxnStatus("Not Sent");
+    await approveTokenAndPostTransaction(formData, route, approval);
   };
 
   const onRejectHandler = () => {
@@ -61,8 +68,9 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
     return (
       <div className="statusContainer">
         <div>
-          The transaction amount exceeds the allowance configured. Do you wish
-          to approve the transaction?
+          The transaction amount exceeds the allowance configured (current
+          allowance - {allowance.allowance} ). Do you wish to approve the
+          transaction?
         </div>
         <div className="buttonContainer">
           <button className="statusButton" onClick={onApproveHandler}>
@@ -95,16 +103,29 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
 const mapState = (state: any) => {
   return {
     allowance: state.allowance.allowance,
+    approval: state.transaction.approval,
     chains: state.chains.chains,
     formData: state.quote.form,
     quote: state.quote.quote,
+    route: state.transaction.route,
   };
 };
 
 const mapDispatch = (dispatch: any) => {
   return {
-    postTransaction: (formData: IGetQuoteParams, quote: IQuote) =>
-      dispatch(postTransaction(formData, quote)),
+    approveTokenAndPostTransaction: (
+      formData: IGetQuoteParams,
+      route: any,
+      approval: any
+    ) => dispatch(approveTokenAndPostTransaction(formData, route, approval)),
+    metamaskApproval: (
+      fromTokenAddress: string,
+      fromWalletAddress: string,
+      amountWei: number
+    ) =>
+      dispatch(
+        getMetamaskApproval(fromTokenAddress, fromWalletAddress, amountWei)
+      ),
   };
 };
 

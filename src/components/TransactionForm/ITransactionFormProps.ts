@@ -8,5 +8,6 @@ export interface ITransactionFormProps extends IReduxState {
   setAllowance: (allowance: number) => void;
   setProcessing: (processing: boolean) => void;
   setStale: (stale: boolean) => void;
-  setTxInitiated: ( txInitiated: boolean) => void;
+  setTxInitiated: (txInitiated: boolean) => void;
+  connectWallet: () => any;
 }

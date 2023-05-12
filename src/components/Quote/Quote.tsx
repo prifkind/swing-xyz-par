@@ -6,6 +6,7 @@ import { IQuoteProps } from "./IQuoteProps";
 import { connect } from "react-redux";
 import { fetchAllowance } from "../../redux/allowance";
 import { IGetQuoteParams } from "../../services/IGetQuoteParams";
+import { _selectRoute } from "../../redux/transaction";
 
 const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
   const {
@@ -13,15 +14,16 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
     getAllowance,
     processing,
     routes,
+    setSelectedRoute,
     setTxInitiated,
     stale,
     txInitiated,
   } = props;
 
-  const onInitiateHandler = async (val: any) => {
-    console.log(val);
+  const onInitiateHandler = async (nestedRoute: any) => {
     setTxInitiated(true);
-    await getAllowance(formData, val);
+    setSelectedRoute(nestedRoute);
+    await getAllowance(formData, nestedRoute);
   };
 
   if (processing) {
@@ -77,6 +79,7 @@ const mapState = (state: any) => {
 
 const mapDispatch = (dispatch: any) => {
   return {
+    setSelectedRoute: (route: any) => dispatch(_selectRoute(route)),
     getAllowance: (formData: IGetQuoteParams, routes: any) =>
       dispatch(fetchAllowance(formData, routes)),
   };

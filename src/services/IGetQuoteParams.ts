@@ -1,6 +1,6 @@
 export interface IGetQuoteParams {
   amount: number | null;
-  amountWei: number | null;
+  amountWei: number | any;
   fromAddress: string;
   fromChain: string;
   fromChainId: number;
