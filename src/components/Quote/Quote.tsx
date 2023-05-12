@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { fetchAllowance } from "../../redux/allowance";
 import { IGetQuoteParams } from "../../services/IGetQuoteParams";
 import { _selectRoute } from "../../redux/transaction";
+import { useNavigate } from "react-router-dom";
 
 const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
   const {
@@ -14,22 +15,28 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
     getAllowance,
     processing,
     routes,
+    setProcessing,
     setSelectedRoute,
     setTxInitiated,
     stale,
     txInitiated,
   } = props;
 
+  const navigate = useNavigate()
+
   const onInitiateHandler = async (nestedRoute: any) => {
+    setProcessing(true)
     setTxInitiated(true);
     setSelectedRoute(nestedRoute);
     await getAllowance(formData, nestedRoute);
+    setProcessing(false)
+    navigate('/allowance')
   };
 
   if (processing) {
     return (
       <div>
-        <ClipLoader size={25} className="spinner" /> Getting quote...
+        <ClipLoader size={25} className="spinner" /> Processing...
       </div>
     );
   } else if (stale) {

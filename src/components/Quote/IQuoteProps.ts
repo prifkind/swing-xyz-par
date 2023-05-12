@@ -7,6 +7,7 @@ export interface IQuoteProps extends IReduxState{
   processing: boolean;
   routes: Array<any>;
   setFormData: (formFields: IGetQuoteParams) => void;
+  setProcessing: (processing: boolean) => void;
   setSelectedRoute: (route: any) => any;
   setTxInitiated: (txInitiated: boolean) => void;
   stale: boolean;

@@ -46,49 +46,53 @@ export const postTransaction = (
   route: any,
   contract: any
 ) => {
-  console.log(formData, route, contract);
   return async (dispatch: any) => {
-    const { data } = await axios.post(
-      `${BASE_URL}/transfer/send`,
-      {
-        tokenSymbol: formData.fromToken,
-        toTokenSymbol: formData.toToken,
-        tokenAmount: `${formData.amountWei}`,
-        fromChain: formData.fromChain,
-        fromChainId: formData.fromChainId,
-        fromTokenAddress: formData.fromTokenAddress,
-        fromUserAddress: formData.fromAddress,
-        toChain: formData.toChain,
-        toChainId: formData.toChainId,
-        toTokenAddress: formData.toTokenAddress,
-        route: [
-          {
-            bridge: route.bridge,
-            bridgeTokenAddress: route.bridgeTokenAddress,
-            name: route.name,
-            steps: route.steps,
-            part: route.part,
-          },
-        ],
-        toContractAddress: contract.to,
-        toContractCallData: contract.data,
-      },
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+    try {
+      const { data } = await axios.post(
+        `${BASE_URL}/transfer/send`,
+        // `https://stoplight.io/mocks/swing/crosschain-api/68673/v0/transfer/send`,
+        {
+          tokenSymbol: formData.fromToken,
+          toTokenSymbol: formData.toToken,
+          tokenAmount: `${formData.amountWei}`,
+          fromChain: formData.fromChain,
+          fromChainId: formData.fromChainId,
+          fromTokenAddress: formData.fromTokenAddress,
+          fromUserAddress: formData.fromAddress,
+          toChain: formData.toChain,
+          toChainId: formData.toChainId,
+          toTokenAddress: formData.toTokenAddress,
+          route: [
+            {
+              bridge: route.bridge,
+              bridgeTokenAddress: route.bridgeTokenAddress,
+              name: route.name,
+              steps: route.steps,
+              part: route.part,
+            },
+          ],
+          toContractAddress: contract.to,
+          toContractCallData: contract.data,
         },
-      }
-    );
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    dispatch(_postTransaction(data));
+      console.log(data);
+      dispatch(_postTransaction(data));
+    } catch (error) {
+      console.log(error);
+    }
   };
 };
 
 export const approveTokenAndPostTransaction = (
   formData: IGetQuoteParams,
-  route: any,
-  contract: any
+  route: any
 ) => {
   return async (dispatch: any, getState: any) => {
     await dispatch(approveToken(formData, route));

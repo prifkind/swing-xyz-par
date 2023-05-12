@@ -1,38 +1,87 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { fetchChains } from "./redux/chains";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 import TransactionForm from "./components/TransactionForm/TransactionForm";
 import Quote from "./components/Quote/Quote";
-import TransactionStatus from "./components/TransactionStatus/TransactionStatus";
+import Allowance from "./components/TransactionStatus/Allowance";
+import Approve from "./components/TransactionStatus/Approve";
+import Send from "./components/TransactionStatus/Send";
+import Complete from "./components/TransactionStatus/Complete";
 
 function App(props: any) {
-  const { allowance, getChains } = props;
+  const { getChains } = props;
+  const [approving, setApproving] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [stale, setStale] = useState(true);
   const [txInitiated, setTxInitiated] = useState(false);
 
   useEffect(() => {
     getChains();
-  },[]);
+  }, []);
 
   return (
-    <div className="App">
-      <TransactionForm
-        processing={processing}
-        setProcessing={setProcessing}
-        setStale={setStale}
-        setTxInitiated={setTxInitiated}
-      />
-      <Quote
-        processing={processing}
-        setTxInitiated={setTxInitiated}
-        stale={stale}
-        txInitiated={txInitiated}
-      />
-      {+allowance.allowance >= 0 ? (
-        <TransactionStatus setTxInitiated={setTxInitiated} />
-      ) : null}
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div>
+              {" "}
+              <TransactionForm
+                processing={processing}
+                setProcessing={setProcessing}
+                setStale={setStale}
+                setTxInitiated={setTxInitiated}
+              />
+              {processing ? (
+                <div>
+                  <ClipLoader size={25} className="spinner" /> Processing...
+                </div>
+              ) : (
+                <Quote
+                  processing={processing}
+                  setProcessing={setProcessing}
+                  setTxInitiated={setTxInitiated}
+                  stale={stale}
+                  txInitiated={txInitiated}
+                />
+              )}
+            </div>
+          }
+        />
+        <Route
+          path="allowance"
+          element={
+            <Allowance
+              approving={approving}
+              processing={processing}
+              setApproving={setApproving}
+              setProcessing={setProcessing}
+            />
+          }
+        />
+        <Route
+          path="approval"
+          element={
+            <Approve
+              approving={approving}
+              setApproving={setApproving}
+              processing={processing}
+              setProcessing={setProcessing}
+            />
+          }
+        />
+        <Route
+          path="/send"
+          element={
+            <Send processing={processing} setProcessing={setProcessing} />
+          }
+        />
+        <Route path="/complete" element={<Complete />} />
+      </Routes>
+    </Router>
   );
 }
 

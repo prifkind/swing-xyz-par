@@ -5,9 +5,7 @@ import { ITransactionStatusProps } from "./ITransactionStatusProps";
 import { status } from "../../services/status";
 import { connect } from "react-redux";
 import { IGetQuoteParams } from "../../services/IGetQuoteParams";
-import {
-  approveTokenAndPostTransaction,
-} from "../../redux/transaction";
+import { approveTokenAndPostTransaction } from "../../redux/transaction";
 import { getMetamaskApproval } from "../../redux/wallet";
 
 const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
@@ -19,7 +17,9 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
     approveTokenAndPostTransaction,
     formData,
     metamaskApproval,
+    processing,
     route,
+    transaction,
   } = props;
 
   const [iteration, setIteration] = useState(0);
@@ -49,7 +49,8 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
     await metamaskApproval(
       formData.fromTokenAddress,
       formData.fromAddress,
-      formData.amountWei
+      formData.amountWei,
+      formData.decimals
     );
 
     await approveTokenAndPostTransaction(formData, route, approval);
@@ -82,6 +83,18 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
         </div>
       </div>
     );
+  } else if (processing) {
+    return (
+      <div>
+        <ClipLoader size={25} className="spinner" /> Processing...
+      </div>
+    );
+  } else if (!transaction) {
+    return (
+      <div>
+        <ClipLoader size={25} className="spinner" /> Processing transaction
+      </div>
+    );
   } else {
     return (
       <div className="statusContainer">
@@ -89,11 +102,7 @@ const TransactionStatus: FunctionComponent<ITransactionStatusProps> = (
           Transaction Status:{" "}
           {txnStatus === "Completed" || txnStatus === "Refund Required" ? (
             txnStatus
-          ) : (
-            <div>
-              <ClipLoader size={25} /> Processing transaction...
-            </div>
-          )}
+          ) : `Still processing`}
         </div>
       </div>
     );
@@ -108,23 +117,27 @@ const mapState = (state: any) => {
     formData: state.quote.form,
     quote: state.quote.quote,
     route: state.transaction.route,
+    transaction: state.transaction.transaction,
   };
 };
 
 const mapDispatch = (dispatch: any) => {
   return {
-    approveTokenAndPostTransaction: (
-      formData: IGetQuoteParams,
-      route: any,
-      approval: any
-    ) => dispatch(approveTokenAndPostTransaction(formData, route, approval)),
+    approveTokenAndPostTransaction: (formData: IGetQuoteParams, route: any) =>
+      dispatch(approveTokenAndPostTransaction(formData, route)),
     metamaskApproval: (
       fromTokenAddress: string,
       fromWalletAddress: string,
-      amountWei: number
+      amountWei: number,
+      decimals: number
     ) =>
       dispatch(
-        getMetamaskApproval(fromTokenAddress, fromWalletAddress, amountWei)
+        getMetamaskApproval(
+          fromTokenAddress,
+          fromWalletAddress,
+          amountWei,
+          decimals
+        )
       ),
   };
 };
