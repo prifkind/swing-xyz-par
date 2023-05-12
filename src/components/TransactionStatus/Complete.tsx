@@ -13,7 +13,7 @@ const Complete: FunctionComponent<ICompleteProps> = (props: ICompleteProps) => {
   return (
     <div>
       <div>Transaction complete</div>
-      <div>Hash: {transaction.tx.data}</div>
+      <div>Hash: </div>
       <Link to="/">Go Home</Link>
     </div>
   );
