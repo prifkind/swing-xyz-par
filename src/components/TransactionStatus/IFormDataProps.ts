@@ -1,4 +1,4 @@
-export interface IGetQuoteParams {
+export interface IFormDataProps {
   amount: number | null;
   amountWei: number | any;
   decimals: number;

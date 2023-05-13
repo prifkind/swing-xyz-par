@@ -1,9 +1,9 @@
-import { IGetQuoteParams } from "../../services/IGetQuoteParams";
+import { IFormDataProps } from "./IFormDataProps";
 
 export interface IAllowanceProps {
   allowance: any;
   approving: boolean;
-  formData: IGetQuoteParams;
+  formData: IFormDataProps;
   metamaskApproval: (
     tokenAddress: string,
     walletAddress: string,

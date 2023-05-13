@@ -1,12 +1,12 @@
 import { IReduxState } from "../../redux/IReduxState";
-import { IGetQuoteParams } from "../../services/IGetQuoteParams";
+import { IFormDataProps } from "../TransactionStatus/IFormDataProps";
 
 export interface IQuoteProps extends IReduxState{
-  formData: IGetQuoteParams;
-  getAllowance: (formData: IGetQuoteParams, routes: any) => any;
+  formData: IFormDataProps;
+  getAllowance: (formData: IFormDataProps, routes: any) => any;
   processing: boolean;
   routes: Array<any>;
-  setFormData: (formFields: IGetQuoteParams) => void;
+  setFormData: (formFields: IFormDataProps) => void;
   setProcessing: (processing: boolean) => void;
   setSelectedRoute: (route: any) => any;
   setTxInitiated: (txInitiated: boolean) => void;

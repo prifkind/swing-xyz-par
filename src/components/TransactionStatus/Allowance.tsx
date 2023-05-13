@@ -38,23 +38,25 @@ const Allowance: FunctionComponent<IAllowanceProps> = (
 
   if (processing) {
     return (
-      <div>
-        <span className="statusContainer">
+      <div className="statusContainer">
+        <span>
           <ClipLoader size={25} className="spinner" />
         </span>
-        <div>Processing transaction</div>
-        <div>This is step 2/4</div>
+        <span className="textContainer">Processing transaction</span>
+        <div className="statusText">This is step 2/4</div>
       </div>
     );
   } else
     return (
-      <div>
-        <div className="statusContainer">
+      <div className="statusContainer">
+        <div className="textContainer">
           <div>
-            The transaction amount exceeds the allowance configured (current
-            allowance - {allowance.allowance} ). Do you wish to approve the
-            transaction?
+            The transaction amount exceeds the allowance configured{" "}
+            <b>(current allowance - {allowance.allowance}</b>
+            ).
           </div>
+          <div>Do you wish to approve the transaction?</div>
+          <div className="statusText">This is step 1/4</div>
           <div className="buttonContainer">
             <button className="statusButton" onClick={onApproveHandler}>
               Approve
@@ -62,8 +64,6 @@ const Allowance: FunctionComponent<IAllowanceProps> = (
             <button className="statusButton" onClick={onRejectHandler}>
               Reject
             </button>
-            <br />
-            <div>This is step 1/4</div>
           </div>
         </div>
       </div>

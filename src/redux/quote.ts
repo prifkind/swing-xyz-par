@@ -1,26 +1,34 @@
 import axios from "axios";
-import { IGetQuoteParams } from "../services/IGetQuoteParams";
+import { IFormDataProps } from "../components/TransactionStatus/IFormDataProps";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 // Actions
 const GET_QUOTE = "GET_QUOTE";
 const FORM_DATA = "FORM_DATA";
+const SET_ROUTES = "SET_ROUTES"
 
 // Action Creators
-const _getQuote = (quote: any) => {
+export const _getQuote = (quote: any) => {
   return {
     type: GET_QUOTE,
     quote: quote,
   };
 };
 
-export const _formData = (formData: IGetQuoteParams) => {
+export const _formData = (formData: IFormDataProps) => {
   return {
     type: FORM_DATA,
     form: formData,
   };
 };
+
+export const _setRoutes = () => {
+  return {
+    type: SET_ROUTES,
+    payload: []
+  }
+}
 
 // Thunks
 export const fetchQuote = (formInfo: any) => {
@@ -53,6 +61,12 @@ export default function quoteReducer(state = initialState, action: any) {
             ...state,
             form: action.form
         }
+    }
+    case SET_ROUTES: {
+      return {
+        ...state,
+        routes: action.payload
+      }
     }
     default:
       return state;

@@ -37,8 +37,9 @@ export const connectMetamask = () => async (dispatch: any) => {
   try {
     await (window as any).ethereum.request({ method: "eth_requestAccounts" });
 
-    // @ts-ignore: Unreachable code error
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(
+      (window as any).ethereum
+    );
     await provider.send("eth_requestAccounts", []);
 
     const signer = provider.getSigner();
@@ -60,16 +61,16 @@ export const getMetamaskApproval =
     decimals: number
   ) =>
   async (dispatch: any) => {
-    // @ts-ignore: Unreachable code error
-
     try {
       const provider = new ethers.providers.Web3Provider(
         (window as any).ethereum
       );
+      await provider.send("eth_requestAccounts", []);
+
       const signer = provider.getSigner();
+      const address = await signer.getAddress();
 
       const erc20Abi = [
-        // Approve the spending of the token
         "function approve(address spender, uint256 amount) public returns (bool)",
       ];
 
@@ -82,7 +83,7 @@ export const getMetamaskApproval =
       const transaction = {
         to: tokenAddress,
         data: data,
-        from: signer._address,
+        from: address,
         gasPrice: await provider.getGasPrice(),
       };
 

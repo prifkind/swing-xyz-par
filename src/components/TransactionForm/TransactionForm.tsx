@@ -3,7 +3,7 @@ import { FunctionComponent } from "react";
 import { connect } from "react-redux";
 import "./styles.css";
 import { ITransactionFormProps } from "./ITransactionFormProps";
-import { IGetQuoteParams } from "../../services/IGetQuoteParams";
+import { IFormDataProps } from "../TransactionStatus/IFormDataProps";
 import { _formData, fetchQuote } from "../../redux/quote";
 import { _setAllowance } from "../../redux/allowance";
 import { connectMetamask } from "../../redux/wallet";
@@ -266,8 +266,8 @@ const mapState = (state: any) => {
 
 const mapDispatch = (dispatch: any) => {
   return {
-    getQuote: (formData: IGetQuoteParams) => dispatch(fetchQuote(formData)),
-    postFormData: (formData: IGetQuoteParams) => dispatch(_formData(formData)),
+    getQuote: (formData: IFormDataProps) => dispatch(fetchQuote(formData)),
+    postFormData: (formData: IFormDataProps) => dispatch(_formData(formData)),
     setAllowance: (allowance: number) => dispatch(_setAllowance(allowance)),
     connectWallet: () => dispatch(connectMetamask()),
   };

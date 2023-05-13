@@ -1,11 +1,11 @@
-import { IGetQuoteParams } from "../../services/IGetQuoteParams";
+import { IFormDataProps } from "./IFormDataProps";
 
 export interface ISendProps {
   approveTokenAndPostTransaction: (
-    formData: IGetQuoteParams,
+    formData: IFormDataProps,
     route: any,
   ) => any;
-  formData: IGetQuoteParams;
+  formData: IFormDataProps;
   processing: boolean;
   route: any;
   setProcessing: (processing: boolean) => void;

@@ -1,13 +1,13 @@
 import React from "react";
 import { FunctionComponent } from "react";
-import ClipLoader from "react-spinners/ClipLoader";
-import "./styles.css";
-import { IQuoteProps } from "./IQuoteProps";
+import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import { fetchAllowance } from "../../redux/allowance";
-import { IGetQuoteParams } from "../../services/IGetQuoteParams";
 import { _selectRoute } from "../../redux/transaction";
-import { useNavigate } from "react-router-dom";
+import "./styles.css";
+import ClipLoader from "react-spinners/ClipLoader";
+import { IQuoteProps } from "./IQuoteProps";
+import { IFormDataProps } from "../TransactionStatus/IFormDataProps";
 
 const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
   const {
@@ -22,15 +22,18 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
     txInitiated,
   } = props;
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const onInitiateHandler = async (nestedRoute: any) => {
-    setProcessing(true)
+    setProcessing(true);
     setTxInitiated(true);
     setSelectedRoute(nestedRoute);
+
     await getAllowance(formData, nestedRoute);
-    setProcessing(false)
-    navigate('/allowance')
+
+    setProcessing(false);
+    setTxInitiated(false);
+    navigate("/allowance");
   };
 
   if (processing) {
@@ -86,9 +89,9 @@ const mapState = (state: any) => {
 
 const mapDispatch = (dispatch: any) => {
   return {
-    setSelectedRoute: (route: any) => dispatch(_selectRoute(route)),
-    getAllowance: (formData: IGetQuoteParams, routes: any) =>
+    getAllowance: (formData: IFormDataProps, routes: any) =>
       dispatch(fetchAllowance(formData, routes)),
+    setSelectedRoute: (route: any) => dispatch(_selectRoute(route)),
   };
 };
 export default connect(mapState, mapDispatch)(Quote);

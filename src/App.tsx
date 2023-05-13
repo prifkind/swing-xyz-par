@@ -37,7 +37,7 @@ function App(props: any) {
               />
               {processing ? (
                 <div>
-                  <ClipLoader size={25} className="spinner" /> Processing...
+                  <ClipLoader size={25} className="spinner" /> Getting available quotes...
                 </div>
               ) : (
                 <Quote
@@ -88,7 +88,6 @@ function App(props: any) {
 const mapState = (state: any) => {
   return {
     chains: state.chains.chains,
-    allowance: state.allowance.allowance,
   };
 };
 
