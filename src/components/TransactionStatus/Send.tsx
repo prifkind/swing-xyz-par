@@ -1,8 +1,9 @@
 import React, { FunctionComponent, useEffect } from "react";
 import { approveTokenAndPostTransaction } from "../../redux/transaction";
+import "./styles.css";
 import { ClipLoader } from "react-spinners";
 import { ISendProps } from "./ISendProps";
-import { IGetQuoteParams } from "../../services/IGetQuoteParams";
+import { IFormDataProps } from "./IFormDataProps";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -31,14 +32,20 @@ const Send: FunctionComponent<ISendProps> = (props: ISendProps) => {
   return (
     <div>
       {processing ? (
-        <div>
-          <ClipLoader size={25} className="spinner" /> Sending transaction
+        <div className="statusContainer">
+          <span>
+            <ClipLoader size={25} className="spinner" />
+          </span>
+          <span className="textContainer">Sending transaction</span>
+          <div className="statusText">This is step 3/4</div>
         </div>
       ) : (
-        <div>
-          <span>Sending Transaction</span>
-          <div>Step 3/4</div>
+        <div className="statusContainer">
+        <div className="textContainer">
+          <span>Sending transaction</span>
+          <div className="statusText">This is step 3/4</div>
         </div>
+      </div>
       )}
     </div>
   );
@@ -53,7 +60,7 @@ const mapState = (state: any) => {
 
 const mapDispatch = (dispatch: any) => {
   return {
-    approveTokenAndPostTransaction: (formData: IGetQuoteParams, route: any) =>
+    approveTokenAndPostTransaction: (formData: IFormDataProps, route: any) =>
       dispatch(approveTokenAndPostTransaction(formData, route)),
   };
 };

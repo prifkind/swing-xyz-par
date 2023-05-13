@@ -37,14 +37,14 @@ export const connectMetamask = () => async (dispatch: any) => {
   try {
     await (window as any).ethereum.request({ method: "eth_requestAccounts" });
 
-    // @ts-ignore: Unreachable code error
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(
+      (window as any).ethereum
+    );
     await provider.send("eth_requestAccounts", []);
 
     const signer = provider.getSigner();
     const account = await signer.getAddress();
 
-    // Set current wallet ID to state
     dispatch(connectMetamaskSuccess(account));
   } catch (error) {
     dispatch(
@@ -52,56 +52,6 @@ export const connectMetamask = () => async (dispatch: any) => {
     );
   }
 };
-
-// export const getMetamaskApproval =
-//   (
-//     tokenAddress: string,
-//     walletAddress: string,
-//     amountWei: number,
-//     decimals: number
-//   ) =>
-//   async (dispatch: any) => {
-//     // @ts-ignore: Unreachable code error
-
-//     try {
-//       const provider = new ethers.providers.Web3Provider(
-//         (window as any).ethereum
-//       );
-//       const signer = provider.getSigner();
-
-//       const erc20Abi = [
-//         // Some details about the token
-//         "function name() view returns (string)",
-//         "function symbol() view returns (string)",
-
-//         // Get the account balance
-//         "function balanceOf(address) view returns (uint)",
-
-//         // Approve the spending of the token
-//         "function approve(address spender, uint amount) returns (bool)",
-//       ];
-
-//       const tokenContract = new ethers.Contract(tokenAddress, erc20Abi, signer);
-
-//       const amountToApprove = ethers.utils.parseUnits(
-//         amountWei.toString(),
-//         decimals
-//       );
-
-//       const approvalTx = await tokenContract.approve(
-//         walletAddress,
-//         amountToApprove
-//       );
-
-//       const receipt = await approvalTx.wait();
-//       console.log(amountWei, decimals, amountToApprove)
-//       if (receipt) {
-//         dispatch(_metamaskApproval(receipt));
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
 
 export const getMetamaskApproval =
   (
@@ -111,16 +61,16 @@ export const getMetamaskApproval =
     decimals: number
   ) =>
   async (dispatch: any) => {
-    // @ts-ignore: Unreachable code error
-
     try {
       const provider = new ethers.providers.Web3Provider(
         (window as any).ethereum
       );
+      await provider.send("eth_requestAccounts", []);
+
       const signer = provider.getSigner();
+      const address = await signer.getAddress();
 
       const erc20Abi = [
-        // Approve the spending of the token
         "function approve(address spender, uint256 amount) public returns (bool)",
       ];
 
@@ -133,6 +83,8 @@ export const getMetamaskApproval =
       const transaction = {
         to: tokenAddress,
         data: data,
+        from: address,
+        gasPrice: await provider.getGasPrice(),
       };
 
       const txResponse = await signer.sendTransaction(transaction);

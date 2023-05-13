@@ -1,7 +1,8 @@
 import axios from "axios";
-import { IGetQuoteParams } from "../services/IGetQuoteParams";
+import { IFormDataProps } from "../components/TransactionStatus/IFormDataProps";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+const TEST_URL = process.env.REACT_APP_TEST_URL;
 
 // Actions
 const SELECT_ROUTE = "SELECT_ROUTE";
@@ -31,7 +32,7 @@ const _postTransaction = (transaction: any) => {
 };
 
 // Thunks
-export const approveToken = (formData: IGetQuoteParams, route: any) => {
+export const approveToken = (formData: IFormDataProps, route: any) => {
   return async (dispatch: any) => {
     const { data } = await axios.get(
       `${BASE_URL}/transfer/approve?bridge=${route.bridge}&fromAddress=${formData.fromAddress}&fromChain=${formData.fromChain}&fromChainId=${formData.fromChainId}&toChain=${formData.toChain}&toChainId=${formData.toChainId}&toTokenAddress=${formData.toTokenAddress}&toTokenSymbol=${formData.toToken}&tokenAddress=${formData.fromTokenAddress}&tokenAmount=${formData.amountWei}&tokenSymbol=${formData.fromToken}`
@@ -42,15 +43,15 @@ export const approveToken = (formData: IGetQuoteParams, route: any) => {
 };
 
 export const postTransaction = (
-  formData: IGetQuoteParams,
+  formData: IFormDataProps,
   route: any,
   contract: any
 ) => {
   return async (dispatch: any) => {
     try {
       const { data } = await axios.post(
-        // `${BASE_URL}/transfer/send`,
-        `https://stoplight.io/mocks/swing/crosschain-api/68673/v0/transfer/send`,
+        `${BASE_URL}/transfer/send`,
+        // `${TEST_URL}/transfer/send`,
         {
           tokenSymbol: formData.fromToken,
           toTokenSymbol: formData.toToken,
@@ -71,7 +72,7 @@ export const postTransaction = (
               part: route.part,
             },
           ],
-          toContractAddress: contract.to,
+          toContractAddress: contract.from,
           toContractCallData: contract.data,
         },
         {
@@ -91,7 +92,7 @@ export const postTransaction = (
 };
 
 export const approveTokenAndPostTransaction = (
-  formData: IGetQuoteParams,
+  formData: IFormDataProps,
   route: any
 ) => {
   return async (dispatch: any, getState: any) => {

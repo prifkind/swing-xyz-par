@@ -1,9 +1,10 @@
 import React, { FunctionComponent, useEffect } from "react";
 import { connect } from "react-redux";
-import ClipLoader from "react-spinners/ClipLoader";
 import { getMetamaskApproval } from "../../redux/wallet";
 import { approveTokenAndPostTransaction } from "../../redux/transaction";
-import { IGetQuoteParams } from "../../services/IGetQuoteParams";
+import './styles.css'
+import ClipLoader from "react-spinners/ClipLoader";
+import { IFormDataProps } from "./IFormDataProps";
 import { IApproveProps } from "./IApproveProps";
 import { useNavigate } from "react-router-dom";
 
@@ -19,17 +20,19 @@ const Approve: FunctionComponent<IApproveProps> = (props: IApproveProps) => {
   return (
     <div>
       {processing ? (
-        <div>
+        <div className="statusContainer">
           <span>
             <ClipLoader size={25} className="spinner" />
           </span>
-          <span>Processing transaction</span>
-          <span>This is step 2/4</span>
+          <span className="textContainer">Processing transaction</span>
+          <div className="statusText">This is step 2/4</div>
         </div>
       ) : (
-        <div>
-          <span>Waiting on approval</span>
-          <div>This is step 2/4</div>
+        <div className="statusContainer">
+          <div className="textContainer">
+            <span>Waiting on approval</span>
+            <div className="statusText">This is step 2/4</div>
+          </div>
         </div>
       )}
     </div>
@@ -44,7 +47,7 @@ const mapState = (state: any) => {
 
 const mapDispatch = (dispatch: any) => {
   return {
-    approveTokenAndPostTransaction: (formData: IGetQuoteParams, route: any) =>
+    approveTokenAndPostTransaction: (formData: IFormDataProps, route: any) =>
       dispatch(approveTokenAndPostTransaction(formData, route)),
     metamaskApproval: (
       fromTokenAddress: string,
