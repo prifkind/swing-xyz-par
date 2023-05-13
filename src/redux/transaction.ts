@@ -72,7 +72,7 @@ export const postTransaction = (
               part: route.part,
             },
           ],
-          toContractAddress: contract.from,
+          toContractAddress: contract.to,
           toContractCallData: contract.data,
         },
         {
@@ -83,7 +83,6 @@ export const postTransaction = (
         }
       );
 
-      console.log(data);
       dispatch(_postTransaction(data));
     } catch (error) {
       console.log(error);
