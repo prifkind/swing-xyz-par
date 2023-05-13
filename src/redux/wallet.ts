@@ -31,6 +31,7 @@ export const connectMetamask = () => async (dispatch: any) => {
     const error = "No Ethereum provider was found. Please install MetaMask.";
     console.log(`error`);
     dispatch(connectMetamaskFailure(error));
+    alert('Please install MetaMask and try again')
     return;
   }
 
