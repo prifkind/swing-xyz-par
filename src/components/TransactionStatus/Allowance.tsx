@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
+import "./styles.css";
 import { IAllowanceProps } from "./IAllowanceProps";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -38,7 +39,7 @@ const Allowance: FunctionComponent<IAllowanceProps> = (
   if (processing) {
     return (
       <div>
-        <span>
+        <span className="statusContainer">
           <ClipLoader size={25} className="spinner" />
         </span>
         <div>Processing transaction</div>
@@ -48,7 +49,6 @@ const Allowance: FunctionComponent<IAllowanceProps> = (
   } else
     return (
       <div>
-        {" "}
         <div className="statusContainer">
           <div>
             The transaction amount exceeds the allowance configured (current
