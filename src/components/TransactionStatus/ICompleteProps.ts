@@ -1,5 +1,5 @@
 export interface ICompleteProps {
   routes: any;
-  setRoutes: () => void;
+  setRoutes: (routes: Array<any>) => void;
   transaction: any;
 }
