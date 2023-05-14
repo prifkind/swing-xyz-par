@@ -8,7 +8,7 @@ export interface IQuoteProps extends IReduxState{
   routes: Array<any>;
   setFormData: (formFields: IFormDataProps) => void;
   setProcessing: (processing: boolean) => void;
-  setSelectedRoute: (route: any) => any;
+  setSelectedRoute: (route: any, amount: string) => any;
   setTxInitiated: (txInitiated: boolean) => void;
   stale: boolean;
   txInitiated: boolean;

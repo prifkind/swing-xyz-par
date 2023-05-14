@@ -1,27 +1,33 @@
-import React, { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import "./styles.css";
 import { connect } from "react-redux";
 import { ICompleteProps } from "./ICompleteProps";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { _setRoutes } from "../../redux/quote";
 
 const Complete: FunctionComponent<ICompleteProps> = (props: ICompleteProps) => {
   const { setRoutes, transaction } = props;
-
-  console.log(transaction);
+  const [txId, setTxId] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setRoutes();
-  },[]);
+    if (transaction.tx && transaction.tx.txId) setTxId(transaction.tx.txId);
+    setRoutes([]);
+  }, [transaction]);
+
+
+  const onClickHandler = () => {
+    navigate("/");
+  };
 
   return (
     <div className="statusContainer">
       <div className="textContainer">
         <span>Transaction complete</span>
-        <div>Transaction hash: {transaction.tx ? transaction.tx : null}</div>
+        <div>Transaction hash:{txId}</div>
         <div className="statusText">This is step 4/4</div>
       </div>
-      <Link to="/">Go Home</Link>
+      <button onClick={onClickHandler}>Go Home</button>
     </div>
   );
 };
@@ -35,7 +41,7 @@ const mapState = (state: any) => {
 
 const mapDispatch = (dispatch: any) => {
   return {
-    setRoutes: () => _setRoutes(),
+    setRoutes: () => dispatch(_setRoutes()),
   };
 };
 

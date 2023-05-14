@@ -27,7 +27,7 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
   const onInitiateHandler = async (nestedRoute: any) => {
     setProcessing(true);
     setTxInitiated(true);
-    setSelectedRoute(nestedRoute);
+    setSelectedRoute(nestedRoute, routes[0].quote.amount);
 
     await getAllowance(formData, nestedRoute);
 
@@ -44,7 +44,7 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
     );
   } else if (stale) {
     return null;
-  } else {
+  } else if (routes.length > 0) {
     return (
       <div>
         {routes.map((route: any, index) => {
@@ -76,7 +76,7 @@ const Quote: FunctionComponent<any> = (props: IQuoteProps) => {
         })}
       </div>
     );
-  }
+  } else return <div></div>
 };
 
 const mapState = (state: any) => {
@@ -91,7 +91,7 @@ const mapDispatch = (dispatch: any) => {
   return {
     getAllowance: (formData: IFormDataProps, routes: any) =>
       dispatch(fetchAllowance(formData, routes)),
-    setSelectedRoute: (route: any) => dispatch(_selectRoute(route)),
+    setSelectedRoute: (route: any, amount: string) => dispatch(_selectRoute(route, amount)),
   };
 };
 export default connect(mapState, mapDispatch)(Quote);

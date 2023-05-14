@@ -28,10 +28,8 @@ const Allowance: FunctionComponent<IAllowanceProps> = (
       formData.amountWei,
       formData.decimals
     );
-    setTimeout(() => {
 
-      navigate("/approval");
-    }, 5000)
+    navigate("/approval");
   };
 
   const onRejectHandler = () => {
